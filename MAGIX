@@ -11,11 +11,11 @@ import os.path
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument("--outdir", type=str, dest = "OUTDIR", action="store",
-              default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/OUT",
-              help="Directory in which a directory named MAGIX_TF_label will be created with the output.")
+                    default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/OUT",
+                    help="Directory in which a directory named MAGIX_TF_label will be created with the output.")
 
 parser.add_argument("--step", type=str, dest ="STEP", default=1,
-                    choices=[1,2,3,4], action="store",
+                    choices=["1","2","3","4"], action="store",
                     help="See description." )
   
 parser.add_argument("--count_matrix", type=str, dest = "COUNT_MATRIX", action="store",
@@ -44,8 +44,8 @@ parser.add_argument("--test_depletion", type=str, dest = "TEST_DEPLETION", actio
 
  ## Step 2 exclusive options
 parser.add_argument("--step2_samples", type=str, dest = "STEP2_SAMPLES", action="store",
-                    default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/CTCF_experiments_per_TF.txt",
-                    help="File with the name of the samples to be included in step 2.")
+                    default="all",
+                    help="File with the name of the samples to be included in step 2, can be all to include every experiment in the design matrix.")
 
 ## Step 3 exclusive options
 parser.add_argument("--ltr_sample_size", type=int, dest ="LTR_SAMPLE_SIZE", action="store",
@@ -59,7 +59,7 @@ parser.add_argument("--previous_model", type=str, dest = "PREVIOUS_MODEL", actio
 
 ## Compare to ChIP-seq exclusive options
 parser.add_argument("--use_chip", type=str, dest = "USE_CHIP", action="store",
-              default="TRUE", help="")
+              default="FALSE", help="")
   
 parser.add_argument("--chip_peaks", type=str, dest = "CHIP_PEAKS", action="store",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/whole_genome_200_bins_closest_summit_CTCF_CTCFChIP2_IGO_10521_25_S37_small_100k.tab",
@@ -77,8 +77,8 @@ if __name__ == '__main__':
 
     args.script_path = os.path.dirname(os.path.realpath(sys.argv[0]))
     
-    MAGIX.check_source_files( args, log )
+    MAGIX.check_source_files( args )
 
-    run_MAGIX( args, log )
+    MAGIX.run_MAGIX( args )
 
 

@@ -4,7 +4,7 @@ library(ggplot2)
 library(tictoc)
 library(Matrix)
 library(uwot)
-library(pheatmap)
+# library(pheatmap)
 library(stringr)
 library(data.table)
 library(PRROC)
@@ -42,14 +42,14 @@ option_list = list(
   ## Step 2 exclusive options
   make_option(c("-b", "--step2_batches"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/CTCF_experiments_per_TF.txt",
-              help=""),
+              help="Either a file to a list with the selected experiment IDs or the string all"),
   
   make_option(c("-x", "--ltr_sample_size"), type="character", metavar="integer",
               default=1000, help=""),
   
   ## Compare to ChIP-seq exclusive options
   make_option(c("-c", "--use_chip"), type="character", metavar="character",
-              default="TRUE", help=""),
+              default="FALSE", help=""),
   
   make_option(c("-p", "--chip_peaks"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/whole_genome_200_bins_closest_summit_CTCF_CTCFChIP2_IGO_10521_25_S37_small_100k.tab",
@@ -137,10 +137,15 @@ if( opt$step == 1 ){
 
 # In step 2, we will limit to samples that are "good"
 if( opt$step == 2 | opt$step == 3 | opt$step == 4 ){
-  selected_samples <- read.csv(file = opt$step2_batches, header = FALSE)
-  selected_samples <- as.vector(selected_samples$V1)
-  selected_samples <- gsub("-", ".", selected_samples )
-  
+    
+    if( opt$step2_batches == "all"){
+        selected_samples <- design$Experiment_ID
+    }else{
+        selected_samples <- read.csv(file = opt$step2_batches, header = FALSE)
+        selected_samples <- as.vector(selected_samples$V1)
+        selected_samples <- gsub("-", ".", selected_samples )
+    }
+    
   batch <- unique(design[design$Experiment_ID %in% selected_samples, "Batch"])
   # design <- design[ design$Batch %in% exp_batches, ]
   # batch <- unique( design$Batch )
