@@ -17,58 +17,61 @@ set.seed(1)
 
 ########################################################   IN and load data ####
 option_list = list(
-  make_option(c("-z", "--script_path"), type="character", metavar="character",
+  make_option(c("-a", "--script_path"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX",
               help=""),
 
-  make_option(c("-o", "--outdir"), type="character", metavar="character",
+  make_option(c("-b", "--outdir"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/OUT",
               help=""),
 
-  make_option(c("-s", "--step"), type="character", metavar="integer", default=4, help="" ),
+  make_option(c("-c", "--step"), type="character", metavar="integer", default=4, help="" ),
   
-  make_option(c("-m", "--count_matrix"), type="character", metavar="character",
+  make_option(c("-d", "--count_matrix"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/GHT_SELEX_CTCF_counts_aggregates_and_experiments_no_blacklisted_100k.bed",
               help=""),
   
-  make_option(c("-d", "--design"), type="character", metavar="character",
+  make_option(c("-e", "--design"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/CTCF_design_matrix_per_TF.txt",
               help=""),
   
-  make_option(c("-t", "--TF"), type="character", metavar="character", default="CTCF", help="Should be the same as in the design matrix"),
+  make_option(c("-f", "--TF"), type="character", metavar="character", default="CTCF", help="Should be the same as in the design matrix"),
   
-  make_option(c("-k", "--TF_label"), type="character", metavar="character", default="CTCF_FL", help="Used for the output file prefix"),  
+  make_option(c("-g", "--TF_label"), type="character", metavar="character", default="CTCF_FL", help="Used for the output file prefix"),  
   
   ## Step 2 exclusive options
-  make_option(c("-b", "--step2_batches"), type="character", metavar="character",
+  make_option(c("-i", "--step2_batches"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/CTCF_experiments_per_TF.txt",
               help="Either a file to a list with the selected experiment IDs or the string all"),
   
-  make_option(c("-x", "--ltr_sample_size"), type="character", metavar="integer",
+  make_option(c("-j", "--ltr_sample_size"), type="character", metavar="integer",
               default=1000, help=""),
   
   ## Compare to ChIP-seq exclusive options
-  make_option(c("-c", "--use_chip"), type="character", metavar="character",
+  make_option(c("-k", "--use_chip"), type="character", metavar="character",
               default="FALSE", help=""),
   
-  make_option(c("-p", "--chip_peaks"), type="character", metavar="character",
+  make_option(c("-l", "--chip_peaks"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/whole_genome_200_bins_closest_summit_CTCF_CTCFChIP2_IGO_10521_25_S37_small_100k.tab",
               help=""),
   
-  make_option(c("-l", "--only_compare_to_chip"), type="character", metavar="character",
+  make_option(c("-m", "--only_compare_to_chip"), type="character", metavar="character",
               default="FALSE", help=""),
   ## Covariance account_covariance
-  make_option(c("-a", "--account_covariance"), type="logical", default=TRUE, help=""),
+  make_option(c("-n", "--account_covariance"), type="logical", default=TRUE, help=""),
   
-  make_option(c("-n", "--previous_model"), type="character", metavar="character",
+  make_option(c("-o", "--previous_model"), type="character", metavar="character",
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/OUT/MAGIX_CTCF_FL/target_CTCF_FL_step_2_model.RDS",
               help=""),
 
-  make_option(c("-q", "--total_ChIP"), type="character", metavar="character",
+  make_option(c("-p", "--total_ChIP"), type="character", metavar="character",
               default="100",
               help=""),  
     
-  make_option(c("-e", "--test_depletion"), type="logical", metavar="character",
+  make_option(c("-q", "--test_depletion"), type="logical", metavar="character",
+              default=FALSE, help=""),
+  
+  make_option(c("-r", "--remove_target_from_aggregate"), type="logical", metavar="character",
               default=FALSE, help="")
   );
 
@@ -121,6 +124,52 @@ this.title <- paste0( "Target: ", opt$TF_label, ", step: ", opt$step, ", n = ", 
 
 cat(this.title)
 ################################################################################
+
+
+
+############################# Substract target counts from aggregates counts ####
+opt$remove_target_from_aggregate <- TRUE
+if ( as.logical(opt$remove_target_from_aggregate) ) {
+  
+  for (this_batch in unique( design$Batch ) ) {
+    
+    # this_batch <- "YWE_B"
+    
+    for ( this_cycle in unique( design$Cycle ) ) {
+      
+      # this_cycle <- 1
+      this_samples <- design[ ( design$Batch == this_batch ) & 
+                              ( design$Cycle == this_cycle ) , ]
+      
+      aggregate_names <- this_samples[ this_samples$Target == "Aggregate", "Sample" ]
+      target_names <- this_samples[ this_samples$Target != "Aggregate", "Sample" ]
+      
+      if(length( aggregate_names ) > 1 ){
+        cat("you should have one aggregate per batch/cycle.\n"); q()
+      }
+      
+      if (length(target_names) > 1 ){
+        
+        tmp_col <- data.frame( rowSums( counts[, target_names] ) )
+        counts[, aggregate_names] <- counts[, aggregate_names] - tmp_col
+        rm(tmp_col)
+      }
+      else{
+        counts[, aggregate_names] <- counts[, aggregate_names] - counts[, target_names]
+      }
+    }
+  }
+}
+
+### Check if removing target from aggregate counts creates negative counts.
+## This can happen when you didnt create the aggregate using the targets and
+## specified --remove_target_from_aggregate = TRUE.
+if ( sum( counts < 0 ) != 0) { cat("Negative values in count matrix.\n") }
+rm(aggregate_names, this_batch, this_samples, target_names )
+
+################################################################################
+
+
 
 
 
