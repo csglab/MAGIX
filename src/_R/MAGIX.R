@@ -1,5 +1,5 @@
-library(ComplexHeatmap)
-library(circlize)
+suppressPackageStartupMessages(library(ComplexHeatmap))
+suppressPackageStartupMessages(library(circlize))
 library(ggplot2)
 library(tictoc)
 library(Matrix)
@@ -44,8 +44,8 @@ option_list = list(
               default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/IN/CTCF_experiments_per_TF.txt",
               help="Either a file to a list with the selected experiment IDs or the string all"),
   
-  make_option(c("-j", "--ltr_sample_size"), type="character", metavar="integer",
-              default=1000, help=""),
+  make_option(c("-j", "--lrt_sample_size"), type="character", metavar="character",
+              default="default_none", help=""),
   
   ## Compare to ChIP-seq exclusive options
   make_option(c("-k", "--use_chip"), type="character", metavar="character",
@@ -128,7 +128,7 @@ cat(this.title)
 
 
 ############################# Substract target counts from aggregates counts ####
-opt$remove_target_from_aggregate <- TRUE
+# opt$remove_target_from_aggregate <- TRUE
 if ( as.logical(opt$remove_target_from_aggregate) ) {
   
   for (this_batch in unique( design$Batch ) ) {
@@ -165,7 +165,7 @@ if ( as.logical(opt$remove_target_from_aggregate) ) {
 ## This can happen when you didnt create the aggregate using the targets and
 ## specified --remove_target_from_aggregate = TRUE.
 if ( sum( counts < 0 ) != 0) { cat("Negative values in count matrix.\n") }
-rm(aggregate_names, this_batch, this_samples, target_names )
+# rm(aggregate_names, this_batch, this_samples, target_names )
 
 ################################################################################
 
@@ -185,7 +185,7 @@ if( opt$step == 1 ){
 
 
 # In step 2, we will limit to samples that are "good"
-if( opt$step == 2 | opt$step == 3 | opt$step == 4 ){
+if( opt$step == 2 | opt$step == 3 ){
     
     if( opt$step2_batches == "all"){
         selected_samples <- design$Experiment_ID
@@ -235,7 +235,7 @@ if( opt$step == 1 ){
 
 ### In step 2, the good batches are combined, so that we are left with one
 ###  slope for the TF of interest (and one slope for the aggregate signal in each batch)
-if( opt$step == 2 | opt$step == 3 | opt$step == 4 ){
+if( opt$step == 2 | opt$step == 3 ){
 
   if( length(unique(design$Batch)) >= 2 ){
     B <- model.matrix(~Batch+Target:Cycle+0,design)
@@ -302,7 +302,7 @@ if( opt$account_covariance == FALSE ){
 
 cat("\n")
 
-if (opt$step == 3 | opt$step == 4) {
+if (opt$step == 3 ) {
   cat("\nSetting parameters from model in step 2\n")
   previous_model <- readRDS( opt$previous_model )
   model$params$s <- previous_model$params$s
@@ -386,7 +386,7 @@ write.table(coefs,paste0( out_prefix, "coefs.txt"),sep="\t",quote=TRUE)
 
 ############################################################################# ##
 ### Create coefficient bed file
-if( opt$step %in% c("2", "3", "4")) {
+if( opt$step %in% c("2", "3")) {
   
   coeff_bed <- str_split_fixed( stats$name, ":", 2 )
   coeff_bed <- cbind( coeff_bed[,1], str_split_fixed( coeff_bed[,2], "-", 2 ) )
@@ -404,38 +404,34 @@ if( opt$step %in% c("2", "3", "4")) {
 
  
 ####################################################################### LRT ####
-if( opt$step == 4 ){
+if( opt$step == 3 ){
   cat("\nLRT\n")
   # model <- model2
   ## Find TargetCTCF:Cycle ( TargetCTCF:Cycle ) column number
   target_column_name <- paste0( "Target", opt$TF, ":Cycle" )
   rm_Index <- which( colnames(B) == target_column_name )
   
-  
   # The above step only fits the model parameters (i.e. identifies maximum a-priori
   # values of the model coefficients). In order to perform statistical analysis,
   # we can use likelihood ratio test (LRT):
 
   cat("\nLikelihood ratio test\n")
+  if( (opt$lrt_sample_size == "default_none") | 
+      ( as.numeric(opt$lrt_sample_size) > nrow(counts) ) ){ 
+    
+    opt$lrt_sample_size <- nrow(counts) 
+    }
   
-  if( opt$step == 3 ){
-    lrt.res <- model$lrt(
+  cat( "LRT sample size: ", as.numeric(opt$lrt_sample_size), "\n" )
+  
+  lrt.res <- model$lrt(
     rmIndex = rm_Index, # This is the index of the variable (in the model matrix) that we want to test
-    topEntries = as.numeric(opt$ltr_sample_size), # Here, I'm performing LRT for only 10,000 bins (out of 2,000,000) due to speed
+    topEntries = as.numeric(opt$lrt_sample_size), # Here, I'm performing LRT for only 10,000 bins (out of 2,000,000) due to speed
     iterations = 10000, track_internval = 20, etol = 1e-3 )
-  }
-  
-  if( opt$step == 4 ){
-    lrt.res <- model$lrt(
-    rmIndex = rm_Index, # This is the index of the variable (in the model matrix) that we want to test
-    topEntries = nrow(counts), # Here, I'm performing LRT for only 10,000 bins (out of 2,000,000) due to speed
-    iterations = 10000, track_internval = 20, etol = 1e-3 )
-  }
-  
-    cat("\n")
+  cat("\n")
   
   lrt.title <- paste0( "Target: ", opt$TF_label, ", step: ", opt$step,
-                       ", LTR n = ", opt$ltr_sample_size )
+                       ", LTR n = ", opt$lrt_sample_size )
 
   
   # lrt.res[order(lrt.res$pvalue),]

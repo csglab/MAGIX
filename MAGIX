@@ -16,7 +16,7 @@ parser.add_argument("--outdir", type=str, dest = "OUTDIR", action="store",
                     help="Directory in which a directory named MAGIX_TF_label will be created with the output.")
 
 parser.add_argument("--step", type=str, dest ="STEP", default=1,
-                    choices=["1","2","3","4"], action="store",
+                    choices=["1","2","3"], action="store",
                     help="See description." )
   
 parser.add_argument("--count_matrix", type=str, dest = "COUNT_MATRIX", action="store",
@@ -49,14 +49,14 @@ parser.add_argument("--step2_samples", type=str, dest = "STEP2_SAMPLES", action=
                     help="File with the name of the samples to be included in step 2, can be all to include every experiment in the design matrix.")
 
 ## Step 3 exclusive options
-parser.add_argument("--ltr_sample_size", type=int, dest ="LTR_SAMPLE_SIZE", action="store",
-                    default=1000,
+parser.add_argument("--lrt_sample_size", type=str, dest ="LRT_SAMPLE_SIZE", action="store",
+                    default="default_none",
                     help="How many peaks are to be included for a LTR test in step 3.")
   
 ## Step 3 and 4 exclusive options
 parser.add_argument("--previous_model", type=str, dest = "PREVIOUS_MODEL", action="store",
                     default="/home/ahcorcha/repos/tools/MAGIX/data/CTCF_demo/OUT/MAGIX_CTCF_FL/target_CTCF_FL_step_2_model.RDS",
-                    help="Model build in step 2 to be used in step 3 or step 4.")
+                    help="Model build in step 2 to be used in step 3.")
 
 ## Compare to ChIP-seq exclusive options
 parser.add_argument("--use_chip", type=str, dest = "USE_CHIP", action="store",
