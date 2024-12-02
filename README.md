@@ -13,7 +13,11 @@ MAGIX is a generative model that explicitly connects the enrichment of TF-bound 
 
 ## **Installation:** 
 
-After cloning, add the line `export PATH=${cloning_directory}/MAGIX:$PATH` to your `.bashrc` file.
+```bash
+git clone https://github.com/csglab/MAGIX.git
+```
+
+After cloning, you can add the line `export PATH=${cloning_directory}/MAGIX:$PATH` to your `.bashrc` file.
 
 ## **Usage:**  
 
@@ -25,7 +29,7 @@ After cloning, add the line `export PATH=${cloning_directory}/MAGIX:$PATH` to yo
 
 
 ## **Demo**
-Demo scripts and corresponding dataset can be found in `./demo_scripts` and `./data/CTCF_demo/IN`. Demo run time for `Step 1` and `2` is ~ 5 min each and ~2 hours for `Step 3`.
+Demo scripts and corresponding dataset can be found in `./demo_scripts` and `./data/CTCF_demo/IN`. Demo run time for `Step 1` and `2` is ~ 5 min each and ~2 hours for `Step 3`. 
 
 For example:
 ```bash
@@ -40,6 +44,7 @@ python3 ./MAGIX \
         --test_depletion FALSE
 ```
 
+You can download the demo output from: https://usegalaxy.org/u/ahcorcha/h/magixdemooutput.
 
 ## **Input files:** 
 
