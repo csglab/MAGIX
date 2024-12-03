@@ -3,7 +3,7 @@
 MAGIX is a generative model that explicitly connects the enrichment of TF-bound genomic intervals to the fragment counts observed across GHT-SELEX cycles. MAGIX, models how TF-bound intervals progressively occupy a higher proportion of selected fragments pool in each cycle relative to genomic background. These fragment proportions, in turn, are treated as latent variables in the model that, together with a sample-specific library size factor, determine the number of observed reads through a Poisson process.
 
 
-## **Requirements:** 
+## **Requirements** 
 
 - Unix-compatible OS.  
 - [R version 3.0.1](http://www.r-project.org/) or later.  
@@ -11,7 +11,7 @@ MAGIX is a generative model that explicitly connects the enrichment of TF-bound 
 - [Python version 3.6.0](https://www.python.org/downloads/) or later.  
 
 
-## **Installation:** 
+## **Installation** 
 
 ```bash
 git clone https://github.com/csglab/MAGIX.git
@@ -19,7 +19,7 @@ git clone https://github.com/csglab/MAGIX.git
 
 After cloning, you can add the line `export PATH=${cloning_directory}/MAGIX:$PATH` to your `.bashrc` file.
 
-## **Usage:**  
+## **Usage**  
 
 **Step 1**: Analyzes every sample for the Target TF separately. Creates a coefficients correlation heatmap, Q-Q plots (for all sample permutations), and estimates library size factors. 
 
@@ -33,8 +33,7 @@ Demo scripts and corresponding dataset can be found in `./demo_scripts` and `./d
 
 For example:
 ```bash
-python3 ./MAGIX \
-        --outdir ${out_directory} \
+MAGIX --outdir ${out_directory} \
         --step 1 \
         --count_matrix ${count_matrix} \
         --design ${design_file} \
@@ -46,14 +45,14 @@ python3 ./MAGIX \
 
 You can download the demo output from: https://usegalaxy.org/u/ahcorcha/h/magixdemooutput.
 
-## **Input files:** 
+## **Input files** 
 
 - `--count_matrix COUNT_MATRIX` Count matrix each column name corresponds to the Experiment_ID column in the design file (--design).
  - `--design DESIGN` Design matrix, must have columns for Batch, Cycle, Experiment_ID, and Target. E.g. `./data/CTCF_demo/IN/CTCF_design_matrix_per_TF.txt`.
  - `--step2_batches` For step 2 and 3, sample names to include in the analysis (default = `all`). 
 
 
-## **Citation:**
+## **Citation**
 
 Jolma, A., Hernandez-Corchado, A., Yang, A. W. H., Fathi, A., Laverty, K. U., Brechalov, A., Razavi, R., Albu, M., Zheng, H., Kulakovskiy, I. V., Najafabadi, H. S., & Hughes, T. R. (2024). GHT-SELEX demonstrates unexpectedly high intrinsic sequence specificity and complex DNA binding of many human transcription factors. BioRxiv, 2024.11.11.618478. https://doi.org/10.1101/2024.11.11.618478
 
