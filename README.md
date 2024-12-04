@@ -25,7 +25,7 @@ After cloning, you can add the line `export PATH=${cloning_directory}/MAGIX:$PAT
 
 **Step 2**: Combines the samples and fits coefficients for the target TF itself. You can limit the analysis to samples that are selected with the results from step 1 (e.g. `*_step_1_coefs_heatmap.pdf`) using `--step2_batches` (default = `all`). 
 
-**Step 3**: Performs a Likelihood-ratio test with the complete model from `Step 2` and a reduced model without the target TF coefficient. It performs the LRT with the entire dataset by default, can be limitated to a smaller sample with `--ltr_sample_size`.
+**Step 3**: Performs a Likelihood-ratio test with the complete model from `Step 2` and a reduced model without the target TF coefficient. It performs the LRT with the entire dataset by default, can be limited to a smaller sample with `--ltr_sample_size`.
 
 
 ## **Demo**
