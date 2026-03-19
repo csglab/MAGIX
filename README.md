@@ -71,6 +71,13 @@ You can download the demo output [here](https://usegalaxy.org/u/ahcorcha/h/magix
  - `--design DESIGN` Design matrix, must have columns for Batch, Cycle, Experiment_ID, and Target. E.g. `./data/CTCF_demo/IN/CTCF_design_matrix_per_TF.txt`.
  - `--step2_batches` For step 2 and 3, sample names to include in the analysis (default = `all`). 
 
+## **Preprocessing and pipeline**
+
+The scripts used to cut adapter, align, obtain the count matrix, run MAGIX genome wide (to estimate the library sizes), and run MAGIX on regions with a minimum signal are provided [here](GHT_pipeline). This corresponds to the following part of the the methods section:
+
+>For each TF, an aggregate BAM file is created across replicates and cycles. For each genomic region with continuous non-zero coverage in this aggregate BAM file, the maximum coverage is calculated. Regions with a maximum coverage smaller than a threshold are discarded, with the threshold being set to the total fragment count in the aggregate BAM file divided by 2×106. Then, per region, the coordinate with the highest coverage is defined as the summit. The candidate peaks are defined as the 200 bp regions centered on the summits.
+>Once the candidate peaks are identified, their count profiles are calculated from the original (unaggregated) BAM files (per cycle and replicate) and used as input to MAGIX to calculate enrichment coefficients, using prefixed library sizes that are estimated by fitting a similar MAGIX model to count profiles of 200-bp non-overlapping genomic intervals (a total of ~13M bins). For each candidate peak, we also calculate a P-value, representing the statistical significance of the enrichment coefficient (null hypothesis is that the enrichment coefficient is zero). To do so, we obtain maximum likelihood estimate of the model coefficients and perform a likelihood ratio test (LRT) against a reduced model in which the enrichment coefficient is restricted to zero. FDRs are calculated using the Benjamini & Hochberg correction.
+
 
 ## **Citation**
 
