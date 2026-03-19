@@ -10,7 +10,6 @@ MAGIX is a generative model that explicitly connects the enrichment of TF-bound 
 - R libraries: [ComplexHeatmap](https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html), [circlize](https://jokergoo.github.io/circlize/), [ggplot2](https://www.rdocumentation.org/packages/ggplot2/versions/3.3.5), [tictoc](https://cran.r-project.org/web/packages/tictoc/index.html), [Matrix](https://cran.r-project.org/web/packages/Matrix/index.html), [uwot](https://cran.r-project.org/web/packages/uwot/index.html), [stringr](https://cran.r-project.org/web/packages/stringr/index.html), [data.table](https://www.rdocumentation.org/packages/data.table/versions/1.14.2), [PRROC](https://cran.r-project.org/web/packages/PRROC/index.html), [sads](https://cran.r-project.org/web/packages/sads/index.html), [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html), and [optparse](https://www.rdocumentation.org/packages/optparse/versions/1.6.6).
 - [Python version 3.6.0](https://www.python.org/downloads/) or later.  
 
-
 ## **Installation** 
 
 ```bash
@@ -18,6 +17,27 @@ git clone https://github.com/csglab/MAGIX.git
 ```
 
 After cloning, you can add the line `export PATH=${cloning_directory}/MAGIX:$PATH` to your `.bashrc` file.
+
+To create a conda environment with all the [requirements](create_conda_env.sh):
+
+```bash
+# Create environment named MAGIX_env and install R
+conda create --name MAGIX_env r-base r-essentials
+conda activate MAGIX_env
+
+# Check that you are using the R installation from conda
+which R Rscript
+
+# Install R dependencies
+Rscript ./src/_R/install_R_lbraries.R
+```
+
+Aternatively, we have created an [Apptainer](https://apptainer.org/docs/user/main/introduction.html) container image ([sif file](https://usegalaxy.org/u/ahcorcha/h/magix-sif-file)) for MAGIX. To run commands with this image:
+```bash
+apptainer exec MAGIX.sif MAGIX --help
+```
+You can follow the steps [here](https://apptainer.org/docs/user/main/quick_start.html#installation) to install Apptainer.
+
 
 ## **Usage**  
 
@@ -43,7 +63,7 @@ MAGIX --outdir ${out_directory} \
         --test_depletion FALSE
 ```
 
-You can download the demo output from: https://usegalaxy.org/u/ahcorcha/h/magixdemooutput.
+You can download the demo output [here](https://usegalaxy.org/u/ahcorcha/h/magixdemooutput).
 
 ## **Input files** 
 
