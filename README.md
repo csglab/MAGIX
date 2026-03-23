@@ -18,7 +18,7 @@ git clone https://github.com/csglab/MAGIX.git
 
 After cloning, you can add the line `export PATH=${cloning_directory}/MAGIX:$PATH` to your `.bashrc` file.
 
-To create a conda environment with all the [requirements](create_conda_env.sh):
+To create a conda environment with all the [requirements](./src/_bash/create_conda_env.sh):
 
 ```bash
 # Create environment named MAGIX_env and install R
