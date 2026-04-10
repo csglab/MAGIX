@@ -1,9 +1,12 @@
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
+install.packages("GetoptLong")
+install.packages("GlobalOptions")
+install.packages("circlize")
 BiocManager::install("ComplexHeatmap")
 
-install.packages("circlize")
+                 
 install.packages("ggplot2")
 install.packages("tictoc")
 install.packages("Matrix")
