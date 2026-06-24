@@ -1,5 +1,8 @@
 # MAGIX: Model-based Analysis of Genomic Intervals with eXponential enrichment.
 
+[![DOI](https://zenodo.org/badge/815298551.svg)](https://doi.org/10.5281/zenodo.20836479)
+
+
 MAGIX is a generative model that explicitly connects the enrichment of TF-bound genomic intervals to the fragment counts observed across GHT-SELEX cycles. MAGIX, models how TF-bound intervals progressively occupy a higher proportion of selected fragments pool in each cycle relative to genomic background. These fragment proportions, in turn, are treated as latent variables in the model that, together with a sample-specific library size factor, determine the number of observed reads through a Poisson process.
 
 
